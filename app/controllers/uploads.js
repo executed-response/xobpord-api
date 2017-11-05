@@ -22,7 +22,7 @@ const index = (req, res, next) => {
 
 const show = (req, res) => {
   res.json({
-    upload: req.upload.toJSON({ virtuals: true, user: req.user })
+    upload: req.upload.toJSON()
   })
 }
 
@@ -35,8 +35,8 @@ const create = (req, res, next) => {
     _owner: req.user._id
   }
   Upload.create(upload)
-  .then(() => {
-    res.status(201).json()
+  .then((upload) => {
+    res.status(201).json({upload: upload.toJSON()})
   })
   .catch(next)
 }
