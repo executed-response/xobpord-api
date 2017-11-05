@@ -1,11 +1,11 @@
 'use strict'
-//
-// const multer = require('multer')
-// const multerUpload = multer({dest: '/tmp'})
+
+const multer = require('multer')
+const multerUpload = multer({dest: '/tmp'})
 
 const controller = require('lib/wiring/controller')
 const Upload = require('app/models/uploads')
-// const s3Upload = require('lib/aws-s3-upload')
+const s3Upload = require('lib/aws-s3-upload')
 
 const authenticate = require('./concerns/authenticate')
 const setUser = require('./concerns/set-current-user')
@@ -27,42 +27,27 @@ const show = (req, res) => {
 }
 
 const create = (req, res, next) => {
-  const upload = {
-    filename: 'filename test',
-    description: 'description test',
-    url: 'url test',
-    tags: 'tag test',
-    _owner: req.user._id
+  const file = {
+    path: req.file.path,
+    name: req.file.originalname,
+    mimetype: req.file.mimetype
   }
-  Upload.create(upload)
-  .then((upload) => {
-    res.status(201).json({upload: upload.toJSON()})
-  })
-  .catch(next)
+  s3Upload(file)
+    .then((s3Response) => Upload.create({
+      filename: 'filename test',
+      description: 'description test',
+      url: s3Response.Location,
+      tags: 'tag test',
+      _owner: req.user._id
+    }))
+    .then((upload) => {
+      return res.status(201)
+          .json({
+            upload: upload
+          })
+    })
+    .catch(next)
 }
-
-  // const file = {
-  //   path: req.file.path,
-  //   name: req.file.originalname,
-  //   mimetype: req.file.mimetype
-  // }
-  // const upload = Object.assign(req.body.upload, {
-  //   _owner: req.user._id
-  // })
-
-  // something along these lines? How do I get the file path and name?
-  // s3Upload(file)
-  //   .then((s3Response) => Upload.create({ // .create does return a promise so we don't need to promisify it ourselves; single line functions have implicit returns so don't need offical "return" word in there (if there were curly brackets, then you would need "return")
-  //     description: 'hard code me first',
-  //     url: s3Response.Location
-  //   }))
-  //   .then((upload) => {
-  //     return res.status(201)
-  //         .json({
-  //           upload: upload
-  //         })
-  //   })
-  //         .catch(next)
 
 const update = (req, res, next) => {
   delete req.body.upload._owner  // disallow owner reassignment.
@@ -86,7 +71,7 @@ module.exports = controller({
   destroy
 }, { before: [
   { method: setUser, only: ['index', 'show'] },
-  // { method: multerUpload.single('image[file]'), only: ['create'] }, // this creates req.file
+  { method: multerUpload.single('file'), only: ['create'] }, // this creates req.file
   { method: authenticate, except: ['index', 'show'] },
   { method: setModel(Upload), only: ['show'] },
   { method: setModel(Upload, { forUser: true }), only: ['update', 'destroy'] }
