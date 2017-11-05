@@ -64,16 +64,6 @@ const create = (req, res, next) => {
   //   })
   //         .catch(next)
 
-//  req.body is { image: { title: '' } }
-// req.file is { fieldname: 'image[file]',
-//   originalname: 'TicTacToe-Wireframes.jpg',
-//   encoding: '7bit',
-//   mimetype: 'image/jpeg',
-//   destination: '/tmp',
-//   filename: '04d79db8979c862298b488c278a04c73',
-//   path: '/tmp/04d79db8979c862298b488c278a04c73',
-//   size: 6235651 }
-
 const update = (req, res, next) => {
   delete req.body.upload._owner  // disallow owner reassignment.
 
