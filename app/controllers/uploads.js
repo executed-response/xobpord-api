@@ -1,7 +1,7 @@
 'use strict'
 
 const multer = require('multer')
-const multerUpload = multer({dest: '/tmp'})
+const multerUpload = multer({dest: '/tmp', limits: {fileSize: '5mb'}})
 
 const controller = require('lib/wiring/controller')
 const Upload = require('app/models/uploads')
@@ -28,24 +28,40 @@ const show = (req, res) => {
 }
 
 const create = (req, res, next) => {
-  const file = {
-    path: req.file.path,
-    name: req.file.originalname,
-    mimetype: req.file.mimetype
-  }
-  s3Upload(file)
-    .then((s3Response) => Upload.create({
-      filename: req.body.filename,
-      description: req.body.description,
-      _url: s3Response.Location,
-      tags: req.body.tags,
-      _owner: req.user._id,
-      _key: s3Response.Key
-    }))
-    .then((upload) => {
-      return res.status(201)
+  const fileUploadPromises = []
+  const uploadedFiles = []
+  const failedFiles = []
+  // handle when no files given in the future
+  // handle partial success (upload all but failed)
+  req.files.forEach(function (fileToMakePromiseFrom) {
+    const file = {
+      path: fileToMakePromiseFrom.path,
+      name: fileToMakePromiseFrom.originalname,
+      mimetype: fileToMakePromiseFrom.mimetype
+    }
+    fileUploadPromises.push(
+      s3Upload(file)
+      .then((s3Response) => Upload.create({
+        filename: fileToMakePromiseFrom.originalname,
+        _url: s3Response.Location,
+        _owner: req.user._id,
+        _key: s3Response.Key
+      }))
+      .then(() => {
+        return uploadedFiles.push(fileToMakePromiseFrom.originalname)
+      })
+      .catch(() => {
+        failedFiles.push(fileToMakePromiseFrom.originalname)
+      }))
+  })
+  Promise.all(fileUploadPromises)
+    .then(() => {
+      let resultStatusCode = 500
+      resultStatusCode = failedFiles.length === 0 ? 201 : 500
+      return res.status(resultStatusCode)
           .json({
-            upload: upload
+            uploadedFiles,
+            failedFiles
           })
     })
     .catch(next)
@@ -73,7 +89,7 @@ module.exports = controller({
   destroy
 }, { before: [
   { method: setUser, only: ['index', 'show'] },
-  { method: multerUpload.single('file'), only: ['create'] }, // this creates req.file
+  { method: multerUpload.array('file', 20), only: ['create'] }, // this creates req.file
   { method: authenticate, except: ['index', 'show'] },
   { method: setModel(Upload), only: ['show'] },
   { method: setModel(Upload, { forUser: true }), only: ['update', 'destroy'] }
