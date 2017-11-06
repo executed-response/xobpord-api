@@ -35,10 +35,10 @@ const create = (req, res, next) => {
   }
   s3Upload(file)
     .then((s3Response) => Upload.create({
-      filename: 'filename test',
-      description: 'description test',
+      filename: req.body.filename,
+      description: req.body.description,
       _url: s3Response.Location,
-      tags: 'tag test',
+      tags: req.body.tags,
       _owner: req.user._id,
       _key: s3Response.Key
     }))
@@ -53,7 +53,6 @@ const create = (req, res, next) => {
 
 const update = (req, res, next) => {
   delete req.body.upload._owner  // disallow owner reassignment.
-
   req.upload.update(req.body.upload)
     .then(() => res.sendStatus(204))
     .catch(next)
@@ -63,7 +62,7 @@ const destroy = (req, res, next) => {
   req.upload.remove()
     .then(() => s3Destroy(req.upload._key))
     .then(() => res.sendStatus(204))
-    .catch(console.error)
+    .catch(next)
 }
 
 module.exports = controller({
