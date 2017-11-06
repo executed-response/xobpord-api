@@ -4,12 +4,10 @@ const mongoose = require('mongoose')
 
 const uploadSchema = new mongoose.Schema({
   filename: {
-    type: String,
-    required: true
+    type: String
   },
   description: {
-    type: String,
-    required: true
+    type: String
   },
   _url: {
     type: String,
