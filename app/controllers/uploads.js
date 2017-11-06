@@ -6,6 +6,7 @@ const multerUpload = multer({dest: '/tmp'})
 const controller = require('lib/wiring/controller')
 const Upload = require('app/models/uploads')
 const s3Upload = require('lib/aws-s3-upload')
+const s3Destroy = require('lib/aws-s3-destroy')
 
 const authenticate = require('./concerns/authenticate')
 const setUser = require('./concerns/set-current-user')
@@ -36,9 +37,10 @@ const create = (req, res, next) => {
     .then((s3Response) => Upload.create({
       filename: 'filename test',
       description: 'description test',
-      url: s3Response.Location,
+      _url: s3Response.Location,
       tags: 'tag test',
-      _owner: req.user._id
+      _owner: req.user._id,
+      _key: s3Response.Key
     }))
     .then((upload) => {
       return res.status(201)
@@ -59,8 +61,9 @@ const update = (req, res, next) => {
 
 const destroy = (req, res, next) => {
   req.upload.remove()
+    .then(() => s3Destroy(req.upload._key))
     .then(() => res.sendStatus(204))
-    .catch(next)
+    .catch(console.error)
 }
 
 module.exports = controller({

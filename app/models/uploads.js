@@ -11,7 +11,7 @@ const uploadSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  url: {
+  _url: {
     type: String,
     required: true
   },
@@ -21,6 +21,10 @@ const uploadSchema = new mongoose.Schema({
   _owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
+    required: true
+  },
+  _key: {
+    type: String,
     required: true
   }
 }, {
