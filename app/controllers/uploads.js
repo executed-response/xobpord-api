@@ -55,7 +55,7 @@ const create = (req, res, next) => {
       }))
   })
   Promise.all(fileUploadPromises)
-    .then((upload) => {
+    .then(() => {
       let resultStatusCode = 500
       resultStatusCode = failedFiles.length === 0 ? 201 : 500
       return res.status(resultStatusCode)
