@@ -15,10 +15,15 @@ const setModel = require('./concerns/set-mongoose-model')
 const index = (req, res, next) => {
   Upload.find()
     .then(uploads => res.json({
-      uploads: uploads.map((e) =>
-        e.toJSON({ virtuals: true, user: req.user }))
+      uploads: uploads.reduce(function (uploadsToReturn, upload) {
+        if (upload._owner.toString() !== req.user._id.toString()) {
+          return uploadsToReturn
+        } else {
+          return uploadsToReturn.concat(upload.toJSON())
+        }
+      }, [])
     }))
-    .catch(next)
+    .catch(console.error)
 }
 
 const show = (req, res) => {
