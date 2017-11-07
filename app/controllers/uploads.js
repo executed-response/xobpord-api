@@ -43,7 +43,6 @@ const create = (req, res, next) => {
       path: fileToMakePromiseFrom.path,
       name: fileToMakePromiseFrom.originalname,
       mimetype: fileToMakePromiseFrom.mimetype
-      // filesize: fileToMakePromiseFrom.size
     }
     fileUploadPromises.push(
       s3Upload(file)
