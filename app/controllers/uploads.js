@@ -50,7 +50,8 @@ const create = (req, res, next) => {
         filename: fileToMakePromiseFrom.originalname,
         _url: s3Response.Location,
         _owner: req.user._id,
-        _key: s3Response.Key
+        _key: s3Response.Key,
+        _filesize: fileToMakePromiseFrom.size
       }))
       .then(() => {
         return uploadedFiles.push(fileToMakePromiseFrom.originalname)
