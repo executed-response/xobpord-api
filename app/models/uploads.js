@@ -29,9 +29,9 @@ const uploadSchema = new mongoose.Schema({
     type: String,
     requires: true
   },
-  public: {
+  private: {
     type: Boolean,
-    default: false
+    default: true
   }
 }, {
   timestamps: true,
