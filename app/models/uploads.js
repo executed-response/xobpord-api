@@ -24,6 +24,14 @@ const uploadSchema = new mongoose.Schema({
   _key: {
     type: String,
     required: true
+  },
+  _filesize: {
+    type: String,
+    requires: true
+  },
+  private: {
+    type: Boolean,
+    default: true
   }
 }, {
   timestamps: true,

@@ -27,9 +27,23 @@ const index = (req, res, next) => {
 }
 
 const show = (req, res) => {
-  res.json({
-    upload: req.upload.toJSON()
-  })
+  if (req.upload.toJSON().private === false) {
+    return res.json({
+      upload: req.upload.toJSON()
+    })
+  }
+  if (req.user === null) {
+    const resultStatusCode = 404
+    return res.status(resultStatusCode).json({})
+  }
+  if (req.upload._owner.toString() !== req.user._id.toString() && (req.upload.toJSON().private === true)) {
+    const resultStatusCode = 404
+    return res.status(resultStatusCode).json({})
+  } else {
+    return res.json({
+      upload: req.upload.toJSON()
+    })
+  }
 }
 
 const create = (req, res, next) => {
@@ -50,7 +64,9 @@ const create = (req, res, next) => {
         filename: fileToMakePromiseFrom.originalname,
         _url: s3Response.Location,
         _owner: req.user._id,
-        _key: s3Response.Key
+        _key: s3Response.Key,
+        _filesize: fileToMakePromiseFrom.size,
+        private: req.user.private
       }))
       .then(() => {
         return uploadedFiles.push(fileToMakePromiseFrom.originalname)
