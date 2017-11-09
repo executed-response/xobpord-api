@@ -9,6 +9,61 @@
 <p>Client Repo on GitHub: https://github.com/executed-response/xobpord</p>
 <p>Deployed API: https://xobpord-api.herokuapp.com/</p>
 
+<h3>API Endpoints:</h3>
+
+<table style="width:30%">
+  <tr>
+    <th>HTTP Verb</th>
+    <th>URI Pattern</th>
+    <th>Controller#Action</th>
+  </tr>
+  <tr>
+    <td>POST</td>
+    <td>/sign-up</td>
+    <td>users#signup</td>
+  </tr>
+  <tr>
+    <td>POST</td>
+    <td>/sign-in</td>
+    <td>users#signin</td>
+  </tr>
+  <tr>
+    <td>DELETE</td>
+    <td>/sign-out/:id</td>
+    <td>users#signout</td>
+  </tr>
+  <tr>
+    <td>PATCH</td>
+    <td>/change-password/:id</td>
+    <td>users#changepw</td>
+  </tr>
+  <tr>
+    <td>GET</td>
+    <td>/uploads</td>
+    <td>uploads#index</td>
+  </tr>
+  <tr>
+    <td>POST</td>
+    <td>/uploads</td>
+    <td>uploads#create</td>
+  </tr>
+  <tr>
+    <td>GET</td>
+    <td>/uploads/:id</td>
+    <td>uploads#show</td>
+  </tr>
+  <tr>
+    <td>PATCH</td>
+    <td>/uploads/:id</td>
+    <td>uploads#update</td>
+  </tr>
+  <tr>
+    <td>DELETE</td>
+    <td>/uploads/:id</td>
+    <td>uploads#destroy</td>
+  </tr>
+</table>
+
 <h3>Technologies Used:</h3>
 <ul>
 <li>Javascript</li>
