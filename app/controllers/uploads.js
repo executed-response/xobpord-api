@@ -23,7 +23,7 @@ const index = (req, res, next) => {
         }
       }, [])
     }))
-    .catch(console.error)
+    .catch(next)
 }
 
 const show = (req, res) => {
