@@ -90,8 +90,6 @@ const create = (req, res, next) => {
 
 const update = (req, res, next) => {
   delete req.body.upload._owner  // disallow owner reassignment.
-  console.log('in update, req.upload._owner is ', req.upload._owner)
-  console.log('in update, req.user._id is ', req.user._id)
   if (req.upload._owner.toString() !== req.user._id.toString()) {
     const resultStatusCode = 404
     return res.status(resultStatusCode).json({})
