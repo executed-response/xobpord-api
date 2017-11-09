@@ -72,7 +72,7 @@
 <li>MongoDB</li>
 <li>mLab</li>
 <li>Mongoose</li>
-<li>Heroku<li>
+<li>Heroku</li>
 <li>AWS</li>
 </ul>
 
@@ -99,6 +99,7 @@
 <li>Allow users to assign collaborators for their files.</li>
 <li>Show progress bar when users are uploading files.</li>
 </li>
+</ul>
 
 <h3>ERD:</h3>
 <p>https://i.imgur.com/WWk9OpO.jpg</p>
