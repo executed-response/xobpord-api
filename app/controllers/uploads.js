@@ -1,7 +1,7 @@
 'use strict'
 
 const multer = require('multer')
-const multerUpload = multer({dest: '/tmp', limits: {fileSize: '5mb'}})
+const multerUpload = multer({dest: '/tmp', limits: {fileSize: 15728640}})
 
 const controller = require('lib/wiring/controller')
 const Upload = require('app/models/uploads')
